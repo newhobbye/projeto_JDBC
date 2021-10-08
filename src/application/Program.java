@@ -3,7 +3,7 @@ package application;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
+
 
 import banco.Banco;
 import banco.BancoException;
@@ -14,6 +14,24 @@ public class Program {
 		Connection conn = null;
 		PreparedStatement st = null;
 		
+		try {
+			conn = Banco.abreConexao();
+			st = conn.prepareStatement("update tb_patinadores set modulo = ? where (Id_patinador = 3)");
+			st.setInt(1, 5);
+			
+			int linhasAfetadas = st.executeUpdate();
+			
+			System.out.println("Concluido! Linhas altaredas: " + linhasAfetadas);
+		}
+		catch(SQLException e) {
+			throw new BancoException(e.getMessage());
+		}finally {
+			Banco.fecharStatement(st);
+			Banco.fecharConexao();
+		
+		}
+		/*
+		 FORMA SIMPLES DE INSERIR DADOS NO BANCO!
 		try {
 			conn = Banco.abreConexao();
 			
@@ -37,6 +55,7 @@ public class Program {
 			Banco.fecharConexao();
 		}
 		
+		*/
 		
 		/*
 		 * 
