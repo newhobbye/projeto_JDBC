@@ -16,6 +16,25 @@ public class Program {
 		
 		try {
 			conn = Banco.abreConexao();
+			st = conn.prepareStatement("delete from tb_patinadores where Id_patinador = ?");
+			st.setInt(1, 6);
+			
+			int linhasAfetadas = st.executeUpdate();
+			
+			System.out.println("Concluido! Linhas altaredas: " + linhasAfetadas);
+		}
+		catch(SQLException e) {
+			throw new BancoException(e.getMessage());
+		}
+		finally {
+			Banco.fecharStatement(st);
+			Banco.fecharConexao();
+		}
+		
+		/*
+		FORMA SIMPLES DE ALTERAR DADOS COM UPDATE!!
+		try {
+			conn = Banco.abreConexao();
 			st = conn.prepareStatement("update tb_patinadores set modulo = ? where (Id_patinador = 3)");
 			st.setInt(1, 5);
 			
@@ -29,7 +48,9 @@ public class Program {
 			Banco.fecharStatement(st);
 			Banco.fecharConexao();
 		
+		
 		}
+		*/
 		/*
 		 FORMA SIMPLES DE INSERIR DADOS NO BANCO!
 		try {
