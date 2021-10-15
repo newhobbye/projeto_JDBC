@@ -1,9 +1,8 @@
 package application;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
+import java.sql.Statement;
 
 import banco.Banco;
 import banco.BancoException;
@@ -12,11 +11,43 @@ public class Program {
 	public static void main(String[] args) {
 		
 		Connection conn = null;
-		PreparedStatement st = null;
+		Statement st = null;
 		
 		try {
 			conn = Banco.abreConexao();
-			st = conn.prepareStatement("delete from tb_patinadores where Id_patinador = ?");
+			
+			conn.setAutoCommit(false);
+			
+			st = conn.createStatement();
+			
+			int rows = st.executeUpdate("update tb_patinadores set modulo = 6 where Id_patinador = 1");
+			/*
+			int x = 1;
+			if(x < 2) {
+				throw new SQLException("Erro Falso");
+			}
+			*/
+			int rows2 = st.executeUpdate("update tb_patinadores set modulo = 6 where Id_patinador = 3");
+			
+			conn.commit();
+			
+			System.out.println("rows: " + rows);
+			System.out.println("rows2: " + rows2);
+			
+		}
+		 catch (SQLException e) {
+				try {
+					conn.rollback(); // desfazer a transação caso de algum erro
+					throw new BancoException("Transaction roller back! Caused by: " + e.getMessage());
+				} catch (SQLException e1) {
+					throw new BancoException("Erro no rollback" + e1.getMessage());
+				}
+			}finally {
+				Banco.fecharStatement(st);
+				Banco.fecharConexao();
+				
+			}
+			/*
 			st.setInt(1, 6);
 			
 			int linhasAfetadas = st.executeUpdate();
@@ -30,6 +61,7 @@ public class Program {
 			Banco.fecharStatement(st);
 			Banco.fecharConexao();
 		}
+		*/
 		
 		/*
 		FORMA SIMPLES DE ALTERAR DADOS COM UPDATE!!
